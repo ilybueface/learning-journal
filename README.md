@@ -26,3 +26,11 @@
 ### Что осталось повторить:
 - ALTER TABLE
 - UPDATE
+
+## 24.05.2026 - День 3. SQL основы
+
+- ALTER TABLE
+- Агрегатные функции AVG,SUM,COUNT
+- UPDATE
+- JOIN  с требя таблицами
+
