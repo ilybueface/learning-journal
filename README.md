@@ -54,6 +54,13 @@
 - ForeignKey
 - select_related
 
+### Что понял:
+
+- зачем нужен __str__
+- разница между get и filter
+- в каким случаях используется select_related
+  
+
 ### Что не понял:
 
 - ForeignKey
