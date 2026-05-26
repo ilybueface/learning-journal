@@ -63,5 +63,5 @@
 
 ### Что не понял:
 
-- ForeignKey
-- select_related
+- ForeignKey - не понимаю синтаксис
+- select_related - не понял как работает изнутри
