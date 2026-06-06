@@ -160,3 +160,25 @@
 - ViewSets и Routers
 - Аутентификация
 - Permissions
+
+
+## 06.06.2026 - День 18. DRF — ViewSets, Routers, @action
+
+### Что сделал:
+- Переписал все view на ViewSets (DrinkViewSet, CategoryViewSet, OrderViewSet)
+- Подключил DefaultRouter — автоматические URLs
+- Написал кастомный эндпоинт через @action detail=False (cheap_drinks)
+- Написал кастомный эндпоинт через @action detail=True (today_orders)
+- Почистил код — 60 строк стало 20
+
+### Что понял:
+- ViewSet заменяет две функции одним классом
+- Router автоматически создаёт URLs — не нужно писать path вручную
+- @action detail=False — для всей коллекции (/drinks/cheap_drinks/)
+- @action detail=True — для одного объекта (/order/2/today_orders/)
+- pk=None в сигнатуре — дефолт, реальный pk приходит из URL
+
+### Честно — что не до конца понял:
+- Разница между @api_view и @action на интуитивном уровне
+- Когда именно использовать detail=True vs detail=False
+- self.get_object() — п
