@@ -181,4 +181,33 @@
 ### Честно — что не до конца понял:
 - Разница между @api_view и @action на интуитивном уровне
 - Когда именно использовать detail=True vs detail=False
-- self.get_object() — п
+- self.get_object() 
+
+
+## 07.06.2026 - День 19. Вложенные сериализаторы + @action углубление
+
+### Что сделал:
+- Добавил вложенный сериализатор category в Drinkserializers
+- Добавил read_only и write_only поля (category_id)
+- Добавил вложенный сериализатор drink в Orderserializers
+- Написал 5 кастомных @action эндпоинтов:
+  - /drinks/cheap_drinks/ — напитки до 300р
+  - /drinks/low_price/ — сортировка по цене
+  - /drinks/most-expensive/ — самый дорогой
+  - /category/1/all_drinks/ — напитки по категории
+  - /order/all_orders/ — количество заказов
+
+### Что понял:
+- read_only=True — поле только для чтения, не принимает данные при POST
+- write_only=True — поле только для записи, не показывается в GET
+- Паттерн: category для чтения + category_id для записи
+- order_by('-price') — минус означает обратный порядок
+- first() — берёт первый объект из QuerySet
+
+### Что не понял до конца:
+- url_path в @action — зачем нужен и когда использовать
+- Интуиция когда использовать detail=True vs detail=False
+
+### Что повторить:
+- Написать вложенный сериализатор с нуля без подсказок
+- @action синтаксис полностью по памяти
