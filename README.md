@@ -234,14 +234,23 @@
 ## 09.06-10.06.2026 - День 21-22. Аутентификация и Permissions 
 
 ### Что прошёл
-- Aутенфикацию
-- Права
-- Кастомные права
+- Токен-аутентификация: установка rest_framework.authtoken
+- Эндпоинт /token/ для получения токена
+- Тестирование API через curl (новый навык)
+- Permissions: IsAuthenticated, AllowAny, IsAdminOrReadOnly
+- Глобальные vs локальные permission_classes
+- Написал кастомный permission IsAdminOrReadOnly с нуля
+- Создал пользователей через createsuperuser и shell
 
 ### Что понял хорошо
-- Настройка прав администратора
+- Локальный permission_classes на ViewSet всегда побеждает глобальный
+- has_permission возвращает только True или False — не Response
+- SAFE_METHODS = GET, HEAD, OPTIONS — не меняют данные
+- Разница между 401 (нет токена) и 403 (нет прав)
 
-  
 ### Что нужно повторить
-- Все остальное
+- Что такое stateless и почему из-за этого нужен токен
+- Три шага установки: INSTALLED_APPS → migrate → REST_FRAMEWORK
+- Разница 401 vs 403 — путаю до сих пор
+- Закрепить все до уверенного уровня
 
