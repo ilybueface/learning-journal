@@ -261,3 +261,50 @@
 - Протестировал API через curl впервые
 - Создал двух пользователей: MRX (админ) и barista (обычный)
 - Проверил разницу прав на реальных запросах
+
+## 11.06.2026 - День off
+
+## 12-13.06.2026 - День 24-25. CSS основы + DRF расширение (Review)
+
+### Что сделал (CSS):
+- Создал структуру frontend проекта: index.html + style.css
+- Освоил CSS reset (* { margin: 0; padding: 0; box-sizing: border-box })
+- Сделал навбар на Flexbox (display: flex, justify-content: space-between, align-items: center)
+- Стилизовал карточки напитков через CSS Grid (grid-template-columns: repeat(3, 1fr), gap)
+- Подключил CORS (django-cors-headers) — установка, settings.py, middleware
+- Написал первый fetch() к своему Django API
+- Вывел реальные данные категорий (Смузи, Чай, Кофе) из БД в консоль через forEach
+
+### Что не понял (CSS):
+- HTML — скелет, CSS — оформление
+- * сбрасывает дефолтные стили браузера
+- 1fr = равная доля доступного пространства в Grid
+- gap — отступ между элементами сетки
+- Flexbox для одной строки/колонки, Grid — для сетки
+- CORS блокирует запросы с разных origin — нужен django-cors-headers
+- Путь данных: БД → queryset → сериализатор → JSON → fetch → JavaScript
+
+### Что сделал (DRF — новая модель Review):
+- Создал модель Review: drink (FK→Drink, CASCADE), author (FK→User, SET_NULL), text, rating, created_at
+- Написал миграцию
+- Создал Reviewserializers с вложенным drink (read_only) + drink_id (write_only) + author (StringRelatedField)
+- Создал ReviewViewSet с permission_classes = [IsAuthenticatedOrReadOnly]
+- Освоил новый метод perform_create — автозапись author из request.user
+- Зарегистрировал ReviewViewSet в DefaultRouter
+- Протестировал через curl: GET без токена (200), POST без токена (401), POST с токеном (201)
+- Самостоятельно нашёл и исправил ошибку FOREIGN KEY constraint failed (несуществующий drink_id)
+
+### Что понял (DRF):
+- perform_create — место где сервер добавляет данные которые клиент не отправлял
+- IsAuthenticatedOrReadOnly: GET — все, POST/PUT/DELETE — любой залогиненный (не только админ)
+- StringRelatedField — показывает строковое представление связанного объекта
+- FOREIGN KEY constraint failed — ссылка на несуществующий id в другой таблице
+
+### Повторение DRF по памяти (с утра):
+- permissions.py (IsAdminOrReadOnly) — написал почти полностью с первой попытки
+- urls.py (obtain_auth_token) — мелкие синтаксические ошибки, исправил сам
+- settings.py REST_FRAMEWORK — несколько попыток с опечатками, итоговый вариант правильный
+
+### Что повторить:
+- Синтаксис JavaScript (.then(), forEach, стрелочные функции) — копировал, не до конца понимает
+- settings.py REST_FRAMEWORK по памяти — ещё нестабильно
