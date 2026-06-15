@@ -304,3 +304,38 @@
 ### Что повторить:
 - Синтаксис JavaScript (.then(), forEach, стрелочные функции) — копировал, не до конца понимает
 - settings.py REST_FRAMEWORK по памяти — ещё нестабильно
+
+
+## 14-15.06.2026 - День 26-27. CSS закрепление + DRF расширение
+
+### Что сделал (CSS):
+- Написал style.css по памяти (с гуглом)
+- Заменил статичные карточки на динамические через fetch
+- Подключили реальные напитки из /coffee/drinks/ — карточки создаются из данных API
+- Нашёл и исправил баг с пагинацией (page_query_param → page_size_query_param)
+
+### Что понял (CSS):
+- Понял синтаксис многих вещей
+
+### Что не понял / повторить (CSS):
+- Не могу пока что писать импровизируя
+- fetch и остальное
+
+### Что сделал (DRF):
+- Добавил @action для ReviewViewSet с фильтрацией отзывов
+- Создал новую модель Promotion
+- Написал миграцию
+- Создал Promotionserializers c вложенным drinks (read_only) и drinks_ids (write_only) + PrimaryKeyRealtedField
+- Создал PromotionViewSet с правами [IsAdminOrReadOnly] и perfom_create
+
+### Что понял (DRF):
+- IsAdminOrReadOnly — GET для всех, изменения только для is_staff=True
+- filterset_fields — простая фильтрация без кастомного FilterSet
+- many=True в сериализаторе — когда передаёшь список объектов
+- @action detail=False — для всей коллекции, не для одного объекта
+  
+
+### Что не понял / повторить (DRF):
+- ManyToMany — интуиция есть, но синтаксис не уверен
+- perform_create для ManyToMany — почему сначала save(), потом set()
+- PrimaryKeyRelatedField — зачем нужен
