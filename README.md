@@ -342,3 +342,38 @@
 - ManyToMany — интуиция есть, но синтаксис не уверен
 - perform_create для ManyToMany — почему сначала save(), потом set()
 - PrimaryKeyRelatedField — зачем нужен
+
+  ## 18.06.2026 - День 28. CSS адаптивность + DRF (Favorites)
+
+### Что сделал (CSS):
+- Добавил media query для .drinks-grid: 3 колонки (десктоп) → 2 (планшет, ≤1024px) → 1 (телефон, ≤768px)
+- Добавил адаптивность для .navbar — уменьшил padding и font-size h1 на узких экранах
+- Проверил все breakpoints через DevTools responsive mode
+
+### Что понял (CSS):
+- @media (max-width: Npx) — стили применяются только когда ширина экрана ≤ N
+- Обычные стили — база для десктопа, media query её переопределяет на маленьких экранах
+- Можно использовать несколько breakpoints для разных размеров (телефон/планшет/десктоп)
+
+### Что сделал (DRF — модель Favorite):
+- Создал модель Favorite: user (FK→User, CASCADE), drink (FK→Drink, CASCADE), added_at (DateTimeField, auto_now_add)
+- Написал миграцию
+- Создал Favoriteserializer с вложенным drink (read_only) + drink_id (write_only), без поля user
+- Создал FavoriteViewSet с permission_classes = [IsAuthenticated]
+- Освоил новый метод get_queryset — фильтрует список по request.user
+- Зарегистрировал FavoriteViewSet в DefaultRouter
+- Протестировал через curl: добавил Латте в избранное (barista), проверил что MRX видит пустой список
+
+### Что понял (DRF):
+- get_queryset переопределяет queryset динамически — фильтрует данные ДО сериализации
+- Без get_queryset все пользователи видели бы избранное друг друга — утечка приватных данных
+- perform_create + get_queryset — стандартная пара для данных привязанных к пользователю
+- DateTimeField vs DateField — DateTime хранит время, важно для сортировки "недавнее"
+
+### Утреннее повторение DRF:
+- permissions.py (IsAdminOrReadOnly) — написал почти с первой попытки
+- settings.py REST_FRAMEWORK — написал ИДЕАЛЬНО с первой попытки, без единой ошибки (прогресс!)
+
+### Что повторить:
+- Синтаксис get_queryset — закрепить написанием с нуля в следующий раз
+- unique_together — новая концепция упомянутая мимоходом, не разбирали глубоко
