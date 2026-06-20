@@ -377,3 +377,30 @@
 ### Что повторить:
 - Синтаксис get_queryset — закрепить написанием с нуля в следующий раз
 - unique_together — новая концепция упомянутая мимоходом, не разбирали глубоко
+
+## 19-20.06.2026 - День 29-30. SearchFilter + OrderingFilter + вложенные роутеры
+
+### Что сделал (CSS закрепление):
+- Написал media queries по памяти (768px и 1024px)
+- Написал CSS reset, body, navbar с Flexbox по памяти
+
+### Что сделал (DRF):
+- Добавил SearchFilter в DrinkViewSet — поиск по name и category__name через ?search=
+- Добавил OrderingFilter в DrinkViewSet — сортировка через ?ordering=price и ?ordering=-price
+- Установил drf-nested-routers
+- Настроил вложенный роутер: /coffee/drinks/5/reviews/
+- Обновил get_queryset в ReviewViewSet — работает для обоих эндпоинтов
+
+### Что понял (DRF):
+- SearchFilter ищет по нескольким полям одновременно через один параметр ?search=
+- OrderingFilter: ?ordering=price — по возрастанию, ?ordering=-price — по убыванию (минус = обратный порядок)
+- Вложенный роутер даёт более логичную структуру URL — /drinks/5/reviews/ показывает отзывы конкретного напитка
+- get_queryset с .get('drink_pk') — работает в обоих случаях: с вложенным URL и без
+
+### Что не понял / повторить:
+- Синтаксис NestedDefaultRouter — писал с подсказкой
+- Как именно kwargs передаёт drink_pk из URL в get_queryset
+
+### Утреннее повторение:
+- REST_FRAMEWORK — написал правильно с первой попытки ✅
+- IsAdminOrReadOnly — почти без ошибок ✅
