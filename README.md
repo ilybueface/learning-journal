@@ -411,3 +411,51 @@
 
 ## 22.06.2026 - день off
 - болел
+
+
+
+## 23.06.2026 - День 33. CSS закрепление + pytest + модель Ingredients
+
+### Что сделал (CSS закрепление):
+- Написал .card, .navbar, .drinks-grid по памяти (с гуглом на некоторые свойства)
+- Объяснил разницу flex/grid/media queries своими словами
+
+### Что сделал (pytest):
+- Установил pytest + pytest-django
+- Настроил pytest.ini
+- Написал 5 базовых тестов:
+  - GET /coffee/category/ → 200
+  - GET /coffee/drinks/ → 200
+  - GET /coffee/order/ без токена → 401
+  - POST /coffee/category/ с токеном админа → 201
+  - POST /coffee/category/ с токеном обычного юзера → 403
+- Нашёл реальный баг: CategoryViewSet имел AllowAny — любой мог создавать категории
+- Исправил баг: поменял на IsAdminOrReadOnly
+
+### Что сделал (DRF — модель Ingredients):
+- Создал модель Ingredients: name, is_allergen, extra_price, drinks (ManyToMany)
+- Написал миграцию
+- Создал Ingredientsserializer с вложенным drinks (read_only, many=True) + drinks_ids (write_only)
+- Создал IngredientsViewSet с perform_create (pop/save/set паттерн)
+- Зарегистрировал в urls.py
+- Протестировал через curl — создал "Карамельный сироп" привязанный к двум напиткам
+- Написал 2 теста для Ingredients — все 7 тестов зелёные
+
+### Что понял:
+- pytest находит баги которые руками не замечаешь — тест на CategoryViewSet нашёл реальную дыру в безопасности
+- @pytest.mark.django_db — разрешает работу с БД в тестах
+- client.credentials() — устанавливает токен для всех запросов клиента
+- assert — проверяет условие, тест падает если False
+
+### Что не понял / повторить:
+- perform_create для ManyToMany — пишу с подсматриванием, логику понимаю
+- Синтаксис PrimaryKeyRelatedField — нужно ещё закрепить
+- Синтаксис pytest не до конца понятен — @pytest.mark.django_db, client.credentials(), структура тестов в целом
+
+### Утреннее повторение:
+- IsAdminOrReadOnly ✅
+- REST_FRAMEWORK ✅
+- perform_create + get_queryset — написал с подсказкой
+
+
+
