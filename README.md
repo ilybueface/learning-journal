@@ -458,4 +458,30 @@
 - perform_create + get_queryset — написал с подсказкой
 
 
+## 25.06.2026 - День 34. Рефакторинг Order → Order + OrderItem
+
+### Что сделал:
+- Переписал модель Order: убрал ForeignKey на Drink, добавил TextChoices (PENDING/PREPARING/READY/COMPLETED) и created_at
+- Создал промежуточную модель OrderItem: order (FK, related_name='items'), drink (FK), quantity
+- Переписал OrderItemserializers и Orderserializers с вложенными items
+- Написал perform_create с циклом: pop → save → for item: create
+- Удалил db.sqlite3 и миграции, пересоздал базу чисто
+- Зарегистрировал все модели в admin.py
+- Протестировал через curl — заказ с двумя напитками создался корректно
+- Написал 2 новых теста: POST с токеном (201) и без токена (401) — 9/9 зелёных
+
+### Что понял:
+- TextChoices хранит короткий код в БД ('PD'), показывает читаемое значение ('Pending')
+- related_name='items' даёт удобный доступ order.items.all() вместо order.orderitem_set.all()
+- ManyToMany нельзя сохранить до создания объекта — нужен id, поэтому сначала save(), потом create() в цикле
+- admin.site.register() — регистрация модели в админке
+
+### Что было сложно:
+- Структура данных для теста (items_data со списком словарей)
+- Понять почему perform_create не может сохранить OrderItem до save()
+
+### Что не понял / повторить:
+- TextChoices vs IntegerChoices — понял разницу, но синтаксис ещё не уверенный
+- validated_data.pop() — зачем именно pop а не просто get
+- Структура вложенных данных в pytest — писал с подсказкой
 
