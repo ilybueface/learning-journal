@@ -458,7 +458,7 @@
 - perform_create + get_queryset — написал с подсказкой
 
 
-## 25.06.2026 - День 34. Рефакторинг Order → Order + OrderItem
+## 24.06.2026 - День 33. Рефакторинг Order → Order + OrderItem
 
 ### Что сделал:
 - Переписал модель Order: убрал ForeignKey на Drink, добавил TextChoices (PENDING/PREPARING/READY/COMPLETED) и created_at
@@ -484,4 +484,16 @@
 - TextChoices vs IntegerChoices — понял разницу, но синтаксис ещё не уверенный
 - validated_data.pop() — зачем именно pop а не просто get
 - Структура вложенных данных в pytest — писал с подсказкой
+
+
+## 25.06.2026 - День 34. CSS расширение.
+
+### Что сделал:
+- Добавил button в html
+- Создал button card и :hover для нее
+- Добавил cursor 
+
+### Что понял:
+- Как добавляются данные в button
+- Почему transition добавляется не в :hover
 
