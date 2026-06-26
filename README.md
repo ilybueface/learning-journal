@@ -458,7 +458,7 @@
 - perform_create + get_queryset — написал с подсказкой
 
 
-## 24.06.2026 - День 33. Рефакторинг Order → Order + OrderItem
+## 24.06.2026 - День 34. Рефакторинг Order → Order + OrderItem
 
 ### Что сделал:
 - Переписал модель Order: убрал ForeignKey на Drink, добавил TextChoices (PENDING/PREPARING/READY/COMPLETED) и created_at
@@ -486,7 +486,7 @@
 - Структура вложенных данных в pytest — писал с подсказкой
 
 
-## 25.06.2026 - День 34. CSS расширение.
+## 25.06.2026 - День 35. CSS расширение.
 
 ### Что сделал:
 - Добавил button в html
