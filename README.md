@@ -497,3 +497,28 @@
 - Как добавляются данные в button
 - Почему transition добавляется не в :hover
 
+
+26-29.06.2026 — День 36-39. CoffeeShopBranch + Swagger + восстановление проекта
+
+Восстановил весь проект с нуля после git rm -rf:
+- Новый репозиторий: JWT_API_coffee
+- Мигрировал с Token auth на JWT (djangorestframework-simplejwt)
+- Все модели, сериализаторы, views, urls, permissions, pagination, filters восстановлены
+- 12 тестов pytest — все зелёные
+
+Добавил модель CoffeeBranch:
+- Поля: name, address, opening_time, closing_time, latitude, longitude, average_check, email
+- Сериализатор, ViewSet, регистрация в роутере
+- search_fields = ['address'], filterset_fields = ['opening_time', 'closing_time']
+- 3 новых теста: GET (200), POST admin (201), POST user (403)
+
+Swagger:
+- drf-spectacular подключён
+- Документация доступна на /docs/
+
+Понял:
+- git rm -rf удаляет файлы физически — нет git restore если не было коммита
+- JWT: access токен живёт 5 минут, refresh — 1 день
+- Bearer вместо Token в заголовке Authorization
+- Правило: git push после каждого урока
+
