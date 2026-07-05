@@ -1,3 +1,5 @@
+# 1 ИНТЕНСИВ
+
 ## 20-21.05.2026 — День 1-2. SQL основы
 
 ### Что сделал:
@@ -522,3 +524,52 @@ Swagger:
 - Bearer вместо Token в заголовке Authorization
 - Правило: git push после каждого урока
 
+
+# 2 ИНТЕНСИВ
+
+## 04.07.2026 - День 1. Start SocialMediaApp
+
+### Что сделал:
+
+- Создал Django-проект SocialMediaAppAPI
+- Исправил конфигурацию путей — DJANGO_SETTINGS_MODULE, ROOT_URLCONF, WSGI_APPLICATION не совпадали с реальной структурой (backend.settings → library.settings → правильный library.library.settings)
+- Подключил rest_framework, backend, rest_framework_simplejwt в INSTALLED_APPS
+- Установил Pillow
+- Создал модель CustomUser(AbstractUser) с полями bio, avatar, birth_date
+- Подключил AUTH_USER_MODEL
+- Создал модель Post — author, text, image, posted_time (оба контент-поля опциональны)
+- Создал модель Like — post, user, created_at, unique_together
+- Создал модель Follow — self-referencing связь через follower/following, с related_name в обе стороны (my_following/followers), unique_together
+- Создал модель Comment — post, user, text, created_at
+- Написал и применил миграции для всех 5 моделей
+- Инициализировал git, создал репозиторий SocialMediaApi на GitHub, настроил remote, запушил оба коммита
+
+### Что понял:
+
+- Traceback от Django нужно читать снизу вверх — там указан реальный путь к файлу, которого не хватает
+- AUTH_USER_MODEL нужно настраивать ДО первой миграции — потом это ломает связи в базе
+- blank влияет на валидацию (форма/API), null влияет на базу данных — это разные вещи
+- Для текстовых полей (CharField/TextField) не используют null=True — только blank=True, иначе два разных представления пустоты
+- Для DateField/ImageField нужны оба параметра — null=True и blank=True
+- related_name в self-referencing ForeignKey должен описывать обратную связь, а не дублировать имя поля
+- unique_together для Like — нужен (нельзя лайкнуть дважды), для Comment — не нужен (можно комментировать многократно)
+- .objects.create() — создаёт и сохраняет объект одной командой, в отличие от .save() у уже существующего объекта
+
+### Что не понял / повторить:
+
+- related_name в обе стороны для self-referencing FK — разобрался только со второй-третьей попытки, нужно закрепить
+- blank/null для DateField — путал несколько раз подряд даже после объяснения
+- 400 vs 401 vs 403 — всё ещё путаю, перепутал в контексте валидации данных (это 400, не про permissions)
+
+### Процесс:
+
+- Начали 03.07, а не 02.07 — весь день 02.07 ушёл на пересборку учебного плана (растяжка интенсива с 60 до 90 дней, перестановка недель, добавление Logging/OAuth/LeetCode фоном)
+- Первая попытка повторения (3:53 утра, без сна) прошла тяжело — много повторяющихся ошибок на элементарных вещах, честно признал "ничего не понимаю"
+- Отменил все дела, поспал, вернулся ночью 04.07 отдохнувшим — повторение прошло кратно быстрее и чище
+- Git был не настроен вообще — backend/, library/, manage.py не попали в первый коммит; разобрались через git status, добавили, закоммитили, создали репозиторий с нуля, запушили
+
+### План на следующий урок (04.07, 18:00):
+
+- Разминка: @action, perform_create, get_queryset, unique_together
+- Сериализаторы для CustomUser, Post, Like, Follow, Comment
+- Первые ViewSet'ы
