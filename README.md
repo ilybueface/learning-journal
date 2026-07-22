@@ -573,3 +573,183 @@ Swagger:
 - Разминка: @action, perform_create, get_queryset, unique_together
 - Сериализаторы для CustomUser, Post, Like, Follow, Comment
 - Первые ViewSet'ы
+
+# 2 ИНТЕНСИВ (продолжение)
+
+## 05.07.2026 - День 2. Сериализаторы
+
+### Что сделал:
+
+- Повторил разминку: @action, perform_create, get_queryset, unique_together (+ отдельно разобрали путаницу 401 vs 403)
+- Написал CustomSerializers (username, first_name, last_name, bio, avatar, birth_date — без password и email)
+- Написал PostSerializers — author вложенный (read_only через CustomSerializers) + author_id (write_only)
+- Написал LikeSerializers, FollowSerializers, CommentSerializers — user/follower через IntegerField(read_only=True), без вложенных объектов
+- Договорились о новом формате разминки: 2 текущих темы + 3 плавающих из всего пройденного материала (включая темы 1-го интенсива)
+
+### Что понял:
+
+- read_only=True — показывает поле при GET, игнорирует при POST; write_only=True — наоборот
+- Для Like/Follow/Comment вложенные сериализаторы избыточны — достаточно ID
+- follower должен подставляться автоматически (read_only), following клиент указывает сам
+
+### Что не понял / повторить:
+
+- Путал регистр имён классов при копировании (Customserializers vs CustomSerializers)
+- Забывал about `author_id` как IntegerField, а не как вложенный сериализатор
+
+---
+
+## 06.07.2026 - День 3. PostViewSet + первый SQL-блок
+
+### Что сделал:
+
+- Написал полноценный PostViewSet: queryset, serializer_class, perform_create (author=request.user), get_queryset (только свои посты)
+- Написал @action `like` — get_object() + request.user + exists()-проверка перед create() (защита от дублей, 400 вместо падения с IntegrityError)
+- Написал @action `unlike` — get_object_or_404 + delete(), статус 204
+- Договорились: SQL-блок — 30 мин в конце каждого урока, в этом же чате, на реальных таблицах проекта
+- SQL: INSERT в backend_post напрямую, LIKE '%текст%' для поиска по подстроке, INNER JOIN backend_post + backend_customuser, COUNT с фильтром по username
+
+### Что понял:
+
+- queryset (атрибут) вычисляется один раз при старте, get_queryset() — на каждый запрос; если оба есть, побеждает get_queryset()
+- exists() нужно проверять ДО create(), а не ловить IntegrityError после
+- 204 No Content — тело ответа должно быть пустым, без текста
+
+### Что не понял / повторить:
+
+- Путал 400/401/403 в контексте лайка
+- N+1 проблема (101 запрос для 100 постов) — вспомнил не сразу
+
+---
+
+## 08.07.2026 - День 4. UserViewSet, CommentViewSet, роутинг, JWT, полный тест
+
+### Что сделал:
+
+- Написал UserViewSet: queryset CustomUser, @action `follow`/`unfollow` — с проверкой exists(), проверкой "нельзя подписаться на себя", корректными ролями follower/following
+- Написал CommentViewSet (простой ModelViewSet, perform_create с user=request.user)
+- Настроил роутинг: backend/urls.py (DefaultRouter, регистрация post/user/comment без лишних слэшей), главный urls.py (include('backend.urls'), JWT-эндпоинты)
+- Подключил JWT: TokenObtainPairView.as_view(), TokenRefreshView.as_view()
+- Исправил баг WSGI_APPLICATION (та же природа, что и в День 1 — путь не совпадал с реальной структурой)
+- Зарегистрировал все 5 моделей в admin.py
+- Разобрался с 401 на Api Root (ожидаемо — DEFAULT_PERMISSION_CLASSES = IsAuthenticated глобально)
+- Прогнал полный сквозной тест через curl: получение JWT-токена → GET постов (видно вложенного автора) → POST лайка (201)
+- Собрал единую PDF-документацию (обе части интенсива + материалы для чтения по темам впереди: PostgreSQL, Docker, CI/CD, Q/F-объекты и Signals, Celery+Redis, throttling/OAuth/Logging, алгоритмы); после фидбэка переделал таблицы (текст перестал наезжать) и убрал избыточные разрывы страниц, добавил разделы про хуки ViewSet (perform_update, perform_destroy, get_serializer_class, get_permissions) и расширенный JWT (access/refresh, SIMPLE_JWT, blacklist)
+
+### Что понял:
+
+- .as_view() вызывается у класса до передачи в path(), не у результата path()
+- access-токен живёт ~5 минут, нужно получать новый перед каждым тестом
+- Порядок сегментов URL важен: /post/2/like/, а не /2/post/like/
+
+### Что не понял / повторить:
+
+- Путался в порядке URL при первом тесте через curl
+- Перенос строки `\` в терминале иногда ломает команду — писать одной строкой надёжнее
+
+---
+
+## 13.07.2026 - День 5. pytest, SQL (GROUP BY/подзапросы), LeetCode, разговор о темпе
+
+### Что сделал:
+
+- Настроил pytest.ini, переименовал tests.py → test_api.py (под конвенцию test_*.py)
+- Написал test_backend_post (401 без токена)
+- Написал test_post_request (201 с JWT-токеном) — нашёл и исправил реальный баг: author_id был обязательным полем в сериализаторе, хотя не используется (добавил required=False)
+- Написал test_double_like (201 → 400 на повторный лайк) — с ошибками разобрался в объекте post.pk, разнице между filter/exists и create
+- SQL: GROUP BY + COUNT (лайки/комментарии на пост), подзапросы (WHERE id = (SELECT ... GROUP BY ... ORDER BY ... LIMIT 1)) — дважды применил самостоятельно
+- Решил LeetCode Two Sum: сначала brute force O(n²) (два вложенных цикла), потом оптимальное решение через hash map O(n) — Accepted на всех тестах
+- Честный разговор про темп занятий — зафиксирован план: 6 дней учёбы/1 день отдыха, 1.5-2 часа интенсива + 30 мин Linux/Python в другом чате, лучшее время — выходные или ночная смена (сохранено в памяти)
+
+### Что понял:
+
+- @pytest.mark.django_db — без него нет доступа к БД в тесте (RuntimeError, не HTTP-статус)
+- create_user() хеширует пароль, обычный create() — нет
+- LIKE в SQLite чувствителен к регистру для кириллицы
+- Подзапросы выполняются изнутри наружу: сначала внутренний, потом его результат подставляется во внешний
+
+### Что не понял / повторить:
+
+- 400 vs 401 vs 403 — снова путал в новом контексте
+- Синтаксис enumerate(), range(i+1, len(nums)) в LeetCode — не с первой попытки
+
+---
+
+## 14.07.2026 - День 6. Лента через Follow, annotate/Count, тест ленты
+
+### Что сделал:
+
+- Собрал логику ленты в PostViewSet.get_queryset(): Follow.objects.filter(follower=request.user).values_list('following', flat=True) → Post.objects.filter(author__in=following_ids)
+- Протестировал через curl: barista подписался на MRX → увидел его 3 поста в ленте
+- Добавил annotate(likes_count=Count('like')) в get_queryset ленты, добавил поле в PostSerializers
+- Изучил в shell обратную связь post.like_set.all() (автоматическое имя без related_name)
+- Протестировал через curl — likes_count корректно показывает 0/3/0
+- Написал test_feed_check (3 пользователя, подписка, 2 поста, проверка "виден"/"не виден") — с несколькими попытками (уникальность username, путаница ролей follower/following, синтаксис list comprehension)
+
+### Что понял:
+
+- values_list('поле', flat=True) — даёт плоский список значений одного поля, а не список кортежей
+- __in — lookup для проверки "значение входит в список"
+- annotate добавляет вычисляемое поле к каждому объекту, filter — просто отбирает строки
+
+### Что не понял / повторить:
+
+- Логику ленты (Follow → following_ids → filter) пришлось объяснять с нуля через аналогию — не удержалось после устной формулировки
+- List comprehension vs обычный цикл — путался в синтаксисе
+
+---
+
+## 18.07.2026 - День 7. Фильтр комментариев, системный баг, счётчики, транзакции
+
+### Что сделал:
+
+- Добавил filterset_fields=['post'] в CommentViewSet — простой фильтр по посту
+- Нашёл системный баг через реальный traceback: IntegerField(read_only=True) пытался сериализовать целый объект CustomUser вместо числа (int() argument... not 'CustomUser') — баг скрывался также в LikeSerializers/FollowSerializers, просто не проявлялся (не было GET-запросов к ним)
+- Исправил все три сериализатора через source='user_id'/'follower_id'
+- Добавил вложенный роутер (rest_framework_nested) — /backend/post/{id}/comments/, get_queryset через self.kwargs.get('post_pk')
+- Добавил в UserViewSet annotate(followers_count=Count('followers'), following_count=Count('my_following')), добавил поля в CustomSerializers
+- Написал test_count_follow (2 пользователя, прямое создание Follow, проверка followers_count через API)
+- SQL: транзакции на практике — BEGIN/INSERT/ROLLBACK (изменение отменяется), BEGIN/INSERT/COMMIT (изменение остаётся навсегда)
+- Честный разговор о реальных цифрах пропусков (1-й интенсив ~20% off-дней, 2-й — ~53%), признана причина — внешние отвлечения (не график); подтверждён план 6/1
+
+### Что понял:
+
+- related_name, если указан явно, полностью заменяет автоматическое имя — нельзя использовать оба
+- self.kwargs.get('post_pk') — как вложенный роутер передаёт id родителя в ViewSet
+- BEGIN/COMMIT/ROLLBACK — группа операций либо выполняется целиком, либо отменяется целиком
+
+### Что не понял / повторить:
+
+- Путал, в какой сериализатор добавлять новые вычисляемые поля (Follow vs CustomUser)
+- Имена вычисляемых полей в annotate() и в сериализаторе должны совпадать буквально — забывал сверять
+
+---
+
+## 21.07.2026 - День 8. Пагинация, сортировка, поиск, комплексное повторение
+
+### Что сделал:
+
+- Написал CustomPagination (pagination.py: page_size=15, page_size_query_param, max_page_size=30), подключил к PostViewSet
+- Протестировал через curl (дефолтный размер и ?page_size=2 — проверил count/next/previous/results)
+- Добавил ordering_fields=['posted_time', 'likes_count'], протестировал ?ordering=-likes_count
+- Добавил search_fields=['text', 'author__username'] (SearchFilter), протестировал ?search=машина
+- Заодно нашёл и исправил старую опечатку — follow() возвращал 204 вместо 201
+- Прошёл устное повторение всего проекта (5 вопросов: путь запроса like, queryset vs get_queryset, source-баг, вложенные роутеры, annotate vs filter)
+- Написал test_pagination_list (3 поста, page_size=2, проверка длины results)
+- SQL — полное повторение: INSERT (снова споткнулся на _id в именах колонок), LIKE (переоткрыл чувствительность к регистру кириллицы), JOIN, GROUP BY + подзапрос (пост с наибольшим числом лайков — восстановил по памяти почти без ошибок), транзакции (устно)
+
+### Что понял:
+
+- page_size_query_param — имя query-параметра, через который клиент сам выбирает размер страницы
+- SearchFilter ищет сразу по нескольким полям через один параметр ?search=
+- Устное повторение вскрывает неточности в формулировках даже при в целом правильном понимании сути
+
+### Что не понял / повторить:
+
+- 400/401/403 и IsAuthenticated/IsAuthenticatedOrReadOnly — разминка показала, что путаница возвращается после пропуска дней
+- Имена колонок _id для ForeignKey в SQL — регулярно забывается, нужно тренировать чаще
+
+### Процесс:
+
+- Между сессиями были ощутимые паузы (13.07 → 14.07 → 18.07 → 21.07) из-за реальных внешних отвлечений (работа, личная жизнь, игры), что признано открыто
+- План 6 дней/1 день отдыха подтверждён повторно как ориентир, без цели "наверстать" любой ценой
